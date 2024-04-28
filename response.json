@@ -1,0 +1,31 @@
+document.getElementById("search-form").addEventListener("submit", async function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    var url = document.getElementById("search-input").value; // Get the URL entered by the user
+
+    // Make a request through Ultraviolet proxy
+    try {
+        const response = await fetch('https://proxy.ultraviolet.network/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                url: url,
+                userAgent: navigator.userAgent,
+            }),
+        });
+        const data = await response.json();
+        
+        if (data && data.url) {
+            // Update the results container with the proxied URL
+            document.getElementById("results-container").innerHTML = `<a href="${data.url}" target="_blank">${data.url}</a>`;
+        } else {
+            // Handle error response from the proxy server
+            document.getElementById("results-container").innerHTML = 'Error: Unable to fetch proxied URL.';
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        document.getElementById("results-container").innerHTML = 'Error fetching data. Please try again later.';
+    }
+});
