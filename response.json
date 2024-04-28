@@ -26,8 +26,9 @@
                 return;
             }
 
-            const proxyUrl = 'https://proxy.ultraviolet.network:443/'; // Replace 1234 with your actual port number
+            const proxyUrl = 'https://docs.titaniumnetwork.org/proxies/ultraviolet'; // Ultraviolet proxy server URL
 
+            console.log('Sending request to proxy server...');
             try {
                 const response = await fetch(proxyUrl, {
                     method: 'POST',
@@ -37,11 +38,15 @@
                     body: JSON.stringify({ url }),
                 });
 
+                console.log('Response received from proxy server:', response);
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
                 const data = await response.json();
+
+                console.log('Data received from proxy server:', data);
 
                 if (data && data.url) {
                     // Clear the current page and replace it with the proxied URL content
