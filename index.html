@@ -56,8 +56,8 @@
         <form id="search-form">
             <input type="text" id="search-input" placeholder="Enter your URL here...">
             <input type="submit" value="Go">
+            <input type="button" value="Reload" onclick="window.location.reload();">
         </form>
-        <div id="results-container"></div>
     </div>
 
     <script>
@@ -66,9 +66,12 @@
 
             var url = document.getElementById("search-input").value; // Get the URL entered by the user
 
+            // Specify the Ultraviolet proxy server URL with the port (replace 1234 with your actual port number)
+            const proxyUrl = 'https://proxy.ultraviolet.network:3000/';
+
             // Make a request through Ultraviolet proxy
             try {
-                const response = await fetch('https://proxy.ultraviolet.network/', {
+                const response = await fetch(proxyUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -79,11 +82,17 @@
                     }),
                 });
                 const data = await response.json();
-                // Update the results container with the proxied URL
-                document.getElementById("results-container").innerHTML = `<a href="${data.url}" target="_blank">${data.url}</a>`;
+                
+                if (data && data.url) {
+                    // Clear the current page and replace it with the proxied URL content
+                    document.body.innerHTML = `<iframe src="${data.url}" style="width: 100%; height: 100vh; border: none;"></iframe>`;
+                } else {
+                    // Handle error response from the proxy server
+                    alert('Error: Unable to fetch proxied URL.');
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
-                document.getElementById("results-container").innerHTML = 'Error fetching data. Please try again later.';
+                alert('Error fetching data. Please try again later.');
             }
         });
     </script>
